@@ -32,6 +32,7 @@ builder.Services
     .AddQueryType<Query>()
     .AddMutationType<Mutation>()
     .AddType<ApartmentType>()
+    .AddType<OwnerType>()
     .AddFiltering()
     .AddSorting()
     .AddProjections();

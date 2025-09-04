@@ -31,7 +31,7 @@ namespace BaseWeb_lab4.GraphQL
 
             descriptor
                 .Field(a => a.Owner)
-                .Description("The owner information of the apartment");
+                .Description("The owner of the apartment");
 
             descriptor
                 .Field(a => a.Price)

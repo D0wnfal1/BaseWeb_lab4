@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BaseWeb_lab4.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250904150901_Create_Database")]
+    [Migration("20250904193734_Create_Database")]
     partial class Create_Database
     {
         /// <inheritdoc />
@@ -45,10 +45,8 @@ namespace BaseWeb_lab4.Migrations
                     b.Property<int>("Floor")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Owner")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -58,7 +56,53 @@ namespace BaseWeb_lab4.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OwnerId");
+
                     b.ToTable("Apartments");
+                });
+
+            modelBuilder.Entity("BaseWeb_lab4.Models.Owner", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Owners");
+                });
+
+            modelBuilder.Entity("BaseWeb_lab4.Models.Apartment", b =>
+                {
+                    b.HasOne("BaseWeb_lab4.Models.Owner", "Owner")
+                        .WithMany("Apartments")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("BaseWeb_lab4.Models.Owner", b =>
+                {
+                    b.Navigation("Apartments");
                 });
 #pragma warning restore 612, 618
         }

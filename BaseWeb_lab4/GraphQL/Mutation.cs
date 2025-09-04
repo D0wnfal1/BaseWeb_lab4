@@ -11,7 +11,7 @@ namespace BaseWeb_lab4.GraphQL
             int floor,
             string area,
             int rooms,
-            string owner,
+            int ownerId,
             decimal price)
         {
             var apartment = new Apartment
@@ -20,7 +20,7 @@ namespace BaseWeb_lab4.GraphQL
                 Floor = floor,
                 Area = area,
                 Rooms = rooms,
-                Owner = owner,
+                OwnerId = ownerId,
                 Price = price
             };
 
@@ -38,7 +38,7 @@ namespace BaseWeb_lab4.GraphQL
             int? floor,
             string? area,
             int? rooms,
-            string? owner,
+            int? ownerId,
             decimal? price)
         {
             var apartment = await context.Apartments.FindAsync(id);
@@ -51,7 +51,7 @@ namespace BaseWeb_lab4.GraphQL
             if (floor.HasValue) apartment.Floor = floor.Value;
             if (area != null) apartment.Area = area;
             if (rooms.HasValue) apartment.Rooms = rooms.Value;
-            if (owner != null) apartment.Owner = owner;
+            if (ownerId.HasValue) apartment.OwnerId = ownerId.Value;
             if (price.HasValue) apartment.Price = price.Value;
 
             await context.SaveChangesAsync();
@@ -90,6 +90,64 @@ namespace BaseWeb_lab4.GraphQL
             await context.SaveChangesAsync();
 
             return apartment;
+        }
+
+        [UseDbContext(typeof(ApplicationDbContext))]
+        public async Task<Owner> CreateOwner(
+            [Service(ServiceKind.Resolver)] ApplicationDbContext context,
+            string name,
+            string phone,
+            string email)
+        {
+            var owner = new Owner
+            {
+                Name = name,
+                Phone = phone,
+                Email = email
+            };
+
+            context.Owners.Add(owner);
+            await context.SaveChangesAsync();
+
+            return owner;
+        }
+
+        [UseDbContext(typeof(ApplicationDbContext))]
+        public async Task<Owner> UpdateOwner(
+            [Service(ServiceKind.Resolver)] ApplicationDbContext context,
+            int id,
+            string? name,
+            string? phone,
+            string? email)
+        {
+            var owner = await context.Owners.FindAsync(id);
+            if (owner == null)
+            {
+                throw new GraphQLException(new Error("Owner not found", "OWNER_NOT_FOUND"));
+            }
+
+            if (name != null) owner.Name = name;
+            if (phone != null) owner.Phone = phone;
+            if (email != null) owner.Email = email;
+
+            await context.SaveChangesAsync();
+
+            return owner;
+        }
+
+        [UseDbContext(typeof(ApplicationDbContext))]
+        public async Task<bool> DeleteOwner([Service(ServiceKind.Resolver)] ApplicationDbContext context, int id)
+        {
+            var owner = await context.Owners.FindAsync(id);
+            if (owner == null)
+            {
+                throw new GraphQLException(new Error("Owner not found", "OWNER_NOT_FOUND"));
+            }
+
+            context.Owners.Remove(owner);
+            await context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

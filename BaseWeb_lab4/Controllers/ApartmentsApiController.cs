@@ -16,15 +16,49 @@ namespace BaseWeb_lab4.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Apartment>>> GetApartments()
+        public async Task<ActionResult<IEnumerable<Apartment>>> GetApartments(
+            string? district = null,
+            decimal? minPrice = null,
+            decimal? maxPrice = null,
+            int? minRooms = null,
+            int? maxRooms = null)
         {
-            return await _context.Apartments.ToListAsync();
+            var apartments = _context.Apartments.Include(a => a.Owner).AsQueryable();
+
+            if (!string.IsNullOrEmpty(district))
+            {
+                apartments = apartments.Where(a => a.District.Contains(district));
+            }
+
+            if (minPrice.HasValue)
+            {
+                apartments = apartments.Where(a => a.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                apartments = apartments.Where(a => a.Price <= maxPrice.Value);
+            }
+
+            if (minRooms.HasValue)
+            {
+                apartments = apartments.Where(a => a.Rooms >= minRooms.Value);
+            }
+
+            if (maxRooms.HasValue)
+            {
+                apartments = apartments.Where(a => a.Rooms <= maxRooms.Value);
+            }
+
+            return await apartments.ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Apartment>> GetApartment(int id)
         {
-            var apartment = await _context.Apartments.FindAsync(id);
+            var apartment = await _context.Apartments
+                .Include(a => a.Owner)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
             if (apartment == null)
             {

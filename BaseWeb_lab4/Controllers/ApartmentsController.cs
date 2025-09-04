@@ -13,9 +13,42 @@ namespace BaseWeb_lab4.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string district, decimal? minPrice, decimal? maxPrice, int? minRooms, int? maxRooms)
         {
-            return View(await _context.Apartments.ToListAsync());
+            var apartments = _context.Apartments.Include(a => a.Owner).AsQueryable();
+
+            if (!string.IsNullOrEmpty(district))
+            {
+                apartments = apartments.Where(a => a.District.Contains(district));
+            }
+
+            if (minPrice.HasValue)
+            {
+                apartments = apartments.Where(a => a.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                apartments = apartments.Where(a => a.Price <= maxPrice.Value);
+            }
+
+            if (minRooms.HasValue)
+            {
+                apartments = apartments.Where(a => a.Rooms >= minRooms.Value);
+            }
+
+            if (maxRooms.HasValue)
+            {
+                apartments = apartments.Where(a => a.Rooms <= maxRooms.Value);
+            }
+
+            ViewBag.District = district;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            ViewBag.MinRooms = minRooms;
+            ViewBag.MaxRooms = maxRooms;
+
+            return View(await apartments.ToListAsync());
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -26,6 +59,7 @@ namespace BaseWeb_lab4.Controllers
             }
 
             var apartment = await _context.Apartments
+                .Include(a => a.Owner)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (apartment == null)
             {
@@ -35,14 +69,15 @@ namespace BaseWeb_lab4.Controllers
             return View(apartment);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.Owners = await _context.Owners.ToListAsync();
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,District,Floor,Area,Rooms,Owner,Price")] Apartment apartment)
+        public async Task<IActionResult> Create([Bind("Id,District,Floor,Area,Rooms,OwnerId,Price")] Apartment apartment)
         {
             if (ModelState.IsValid)
             {
@@ -65,12 +100,13 @@ namespace BaseWeb_lab4.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Owners = await _context.Owners.ToListAsync();
             return View(apartment);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,District,Floor,Area,Rooms,Owner,Price")] Apartment apartment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,District,Floor,Area,Rooms,OwnerId,Price")] Apartment apartment)
         {
             if (id != apartment.Id)
             {
@@ -108,6 +144,7 @@ namespace BaseWeb_lab4.Controllers
             }
 
             var apartment = await _context.Apartments
+                .Include(a => a.Owner)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (apartment == null)
             {

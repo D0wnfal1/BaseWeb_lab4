@@ -23,8 +23,10 @@ namespace BaseWeb_lab4.Models
         public int Rooms { get; set; }
 
         [Required]
-        [StringLength(200)]
-        public string Owner { get; set; } = string.Empty;
+        public int OwnerId { get; set; }
+
+        // Navigation property
+        public Owner? Owner { get; set; }
 
         [Required]
         [Range(1000, 10000000)]

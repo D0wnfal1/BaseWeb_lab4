@@ -10,5 +10,6 @@ namespace BaseWeb_lab4.Models
         }
 
         public DbSet<Apartment> Apartments { get; set; }
+        public DbSet<Owner> Owners { get; set; }
     }
 }
