@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BaseWeb_lab4.Models;
@@ -20,14 +15,12 @@ namespace BaseWeb_lab4.Controllers
             _context = context;
         }
 
-        // GET: api/ApartmentsApi
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Apartment>>> GetApartments()
         {
             return await _context.Apartments.ToListAsync();
         }
 
-        // GET: api/ApartmentsApi/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Apartment>> GetApartment(int id)
         {
@@ -41,7 +34,6 @@ namespace BaseWeb_lab4.Controllers
             return apartment;
         }
 
-        // PUT: api/ApartmentsApi/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutApartment(int id, Apartment apartment)
         {
@@ -71,7 +63,6 @@ namespace BaseWeb_lab4.Controllers
             return NoContent();
         }
 
-        // POST: api/ApartmentsApi
         [HttpPost]
         public async Task<ActionResult<Apartment>> PostApartment(Apartment apartment)
         {
@@ -81,7 +72,6 @@ namespace BaseWeb_lab4.Controllers
             return CreatedAtAction("GetApartment", new { id = apartment.Id }, apartment);
         }
 
-        // DELETE: api/ApartmentsApi/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteApartment(int id)
         {

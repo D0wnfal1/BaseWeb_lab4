@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BaseWeb_lab4.Models;
 
@@ -18,13 +13,11 @@ namespace BaseWeb_lab4.Controllers
             _context = context;
         }
 
-        // GET: Apartments
         public async Task<IActionResult> Index()
         {
             return View(await _context.Apartments.ToListAsync());
         }
 
-        // GET: Apartments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,13 +35,11 @@ namespace BaseWeb_lab4.Controllers
             return View(apartment);
         }
 
-        // GET: Apartments/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Apartments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,District,Floor,Area,Rooms,Owner,Price")] Apartment apartment)
@@ -62,7 +53,6 @@ namespace BaseWeb_lab4.Controllers
             return View(apartment);
         }
 
-        // GET: Apartments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,7 +68,6 @@ namespace BaseWeb_lab4.Controllers
             return View(apartment);
         }
 
-        // POST: Apartments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,District,Floor,Area,Rooms,Owner,Price")] Apartment apartment)
@@ -111,7 +100,6 @@ namespace BaseWeb_lab4.Controllers
             return View(apartment);
         }
 
-        // GET: Apartments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,7 +117,6 @@ namespace BaseWeb_lab4.Controllers
             return View(apartment);
         }
 
-        // POST: Apartments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
